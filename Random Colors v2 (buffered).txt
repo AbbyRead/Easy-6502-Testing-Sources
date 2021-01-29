@@ -1,0 +1,77 @@
+		;store a 256 long series of random colors
+		;output them in a 1 every 6 ticks burst
+		;will eventually cause an SP underflow
+		;would need to flowchart to determine a fix
+
+LDY #$02
+LDX #$00
+LDA #$00
+
+repeat:
+JSR getrand
+JSR store
+JMP repeat
+
+getrand:
+LDA $FE		
+AND #$0F
+RTS
+
+
+store:		;store a sequence of 256 random colors
+STA $00,X	;into the zero page registers
+CPX FF		;check if complete
+INX		;increment counter
+BEQ checkline	;jump to draw if finished
+RTS		;get another color if not
+
+
+
+draw02:		;draw the top portion of the screen
+LDA $00,X	;get zero page color
+STA $0200,X	;copy to screen
+CPX FF		;check if done
+INX		;increment counter
+BEQ nextline	;branch if comparison matches (done)
+JMP draw02
+
+draw03:		;draw the top portion of the screen
+LDA $00,X	;get zero page color
+STA $0300,X	;copy to screen
+CPX FF		;check if done
+INX		;increment counter
+BEQ nextline	;branch if comparison matches (done)
+JMP draw03
+
+draw04:		;draw the top portion of the screen
+LDA $00,X	;get zero page color
+STA $0400,X	;copy to screen
+CPX FF		;check if done
+INX		;increment counter
+BEQ nextline	;branch if comparison matches (done)
+JMP draw04
+
+draw05:		;draw the top portion of the screen
+LDA $00,X	;get zero page color
+STA $0500,X	;copy to screen
+CPX FF		;check if done
+INX		;increment counter
+BEQ nextline	;branch if comparison matches (done)
+JMP draw05
+
+
+
+nextline:
+INY
+JMP store
+
+checkline:
+CPY #$02
+BEQ draw02
+CPY #$03
+BEQ draw03
+CPY #$04
+BEQ draw04
+CPY #$05
+BEQ draw05
+JMP $0600
