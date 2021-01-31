@@ -1,0 +1,37 @@
+	define tmp $00
+	define resadl $01
+	define resadh $02
+	define mprad $03
+	define mpdad $04
+
+LDA #25
+STA mpdad
+LDA #06
+STA mprad
+
+LDA #00
+STA tmp
+STA resadl
+STA resadh
+LDX #08
+
+mult:
+LSR mprad
+BCC noadd
+LDA resadl
+CLC
+ADC mpdad
+STA resadl
+LDA resadh
+ADC tmp
+STA resadh
+
+noadd:
+ASL mpdad
+ROL tmp
+DEX
+BNE mult
+
+LDA #$FF
+LDX resadh
+LDY resadl
