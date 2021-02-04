@@ -1,0 +1,29 @@
+start:
+LDA #$02
+STA $01
+LDX #$00
+
+repeat:
+JSR getrand
+JSR incout
+JMP repeat
+
+getrand:
+LDA $FE		
+AND #$0F
+RTS
+
+incout:
+STA ($00,X)
+LDA $01
+CMP FF
+INC $00
+BEQ nextline
+RTS
+
+nextline:
+LDA $01
+CMP #$05
+BEQ start
+INC $01
+JMP repeat
