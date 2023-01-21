@@ -27,3 +27,7 @@ CMP #$05
 BEQ start
 INC $01
 JMP repeat
+
+; sta $00, x	; at memory address $00 and x over
+; sta ($00, x) 	; $00+x gives mem adr to reference... to store
+; sta ($00), Y	; Y over REFERENCED address
