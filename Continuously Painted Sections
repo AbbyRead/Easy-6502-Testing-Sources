@@ -1,0 +1,29 @@
+; Prepare page-increasing reference address
+ldx #1		; initialize color as white
+
+start:
+lda #$02
+sta $01
+
+init:
+ldy #$ff
+txa		; get color info
+
+again:
+iny
+sta ($00), Y	; Y spaces over from REFERENCED ADDRESS
+cpy #$ff
+bne again
+
+sectionChange:
+tax		; Save color into X
+lda $01		; Load current section value
+clc
+adc #1
+cmp #6		; Carry set if A val is >= compared value
+inx
+bcs start
+sta $01
+inx
+txa
+jmp again
