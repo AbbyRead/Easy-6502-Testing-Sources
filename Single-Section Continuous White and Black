@@ -1,0 +1,23 @@
+define c_black $0
+define c_white $1
+
+; Prepare page-increasing reference address
+lda #$02
+sta $01
+
+phase1:
+lda #c_white
+
+phase2:
+
+ldy #$ff
+
+again:
+iny
+sta ($00), Y	; Y over REFERENCED address
+cpy #$ff
+bne again
+cmp #1
+bne phase1
+lda #c_black
+jmp phase2
