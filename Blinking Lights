@@ -1,6 +1,6 @@
-; Messing around with bit shifts and decrements
-LDX $FF
-LDY $FF
+; Messing around with bit shifts and arithmetic
+LDX #$00
+LDY #$00
 loop:
 TXA
 STA $fc
@@ -9,7 +9,27 @@ LSR
 LSR
 LSR
 LSR
+CMP #$00
+BEQ increment
+CMP #$0b
+BEQ increment
+
+continue:
 STA $fd
 STA $0202
-DEX
+INX
+jsr spinWheels
 jmp loop
+
+increment:
+adc #$01
+jmp continue
+
+spinWheels:    ; Time waster from the snake game
+  ldy #$40
+spinloop:
+  nop
+  nop
+  dey
+  bne spinloop
+  rts
