@@ -3,15 +3,28 @@
 ; \__ \ ' \/ _` | / / -_) _ \__ \ () / /
 ; |___/_||_\__,_|_\_\___\___/___/\__/___|
 
-; Change direction: W A S D
+; Change direction: E S D F
 
-define appleL         $00 ; screen location of apple, low byte
-define appleH         $01 ; screen location of apple, high byte
-define snakeHeadL     $10 ; screen location of snake head, low byte
-define snakeHeadH     $11 ; screen location of snake head, high byte
-define snakeBodyStart $12 ; start of snake body byte pairs
-define snakeDirection $02 ; direction (possible values are below)
-define snakeLength    $03 ; snake length, in bytes
+define appleL         $00 
+; screen location of apple, low byte
+
+define appleH         $01 
+; screen location of apple, high byte
+
+define snakeHeadL     $10 
+; screen location of snake head, low byte
+
+define snakeHeadH     $11 
+; screen location of snake head, high byte
+
+define snakeBodyStart $12 
+; start of snake body byte pairs
+
+define snakeDirection $02 
+; direction (possible values are below)
+
+define snakeLength    $03 
+; snake length, in bytes
 
 ; Directions (each using a separate bit)
 define movingUp      1
@@ -19,17 +32,17 @@ define movingRight   2
 define movingDown    4
 define movingLeft    8
 
-; ASCII values of keys controlling the snake
-define ASCII_w      $77
-define ASCII_a      $61
-define ASCII_s      $73
-define ASCII_d      $64
+; relative ASCII values of keys controlling the snake
+define ASCII_w      $6f ; o hw: e
+define ASCII_a      $69 ; i hw: s
+define ASCII_s      $65 ; e hw: d
+define ASCII_d      $61 ; a hw: f
 
 ; System variables
 define sysRandom    $fe
 define sysLastKey   $ff
 
-
+start:
   jsr init
   jsr loop
 
@@ -42,6 +55,7 @@ init:
 initSnake:
   lda #movingRight  ;start direction
   sta snakeDirection
+  sta sysLastKey
 
   lda #4  ;start length (2 segments)
   sta snakeLength
@@ -171,7 +185,8 @@ maybeCollided:
 continueCollisionLoop:
   inx
   inx
-  cpx snakeLength          ;got to last section with no collision
+  cpx snakeLength          
+ ;got to last section with no collision
   beq didntCollide
   jmp snakeCollisionLoop
 
@@ -262,7 +277,7 @@ drawSnake:
 
 
 spinWheels:
-  ldx #0
+  ldx #$40
 spinloop:
   nop
   nop
@@ -272,3 +287,39 @@ spinloop:
 
 
 gameOver:
+  jsr clearScreen
+  jsr start
+
+clearScreen:
+  ldx #$00
+  ldy #$00
+
+clsLoop200s:
+  tya 		;refresh a with 00
+  sta $0200,x
+  inx
+  txa
+  bne clsLoop200s
+
+clsLoop300s:
+  tya 		;refresh a with 00
+  sta $0300,x
+  inx
+  txa
+  bne clsLoop300s
+
+clsLoop400s:
+  tya 		;refresh a with 00
+  sta $0400,x
+  inx
+  txa
+  bne clsLoop400s
+
+clsLoop500s:
+  tya 		;refresh a with 00
+  sta $0500,x
+  inx
+  txa
+  bne clsLoop500s
+
+  jmp start
