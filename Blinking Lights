@@ -1,0 +1,15 @@
+; Messing around with bit shifts and decrements
+LDX $FF
+LDY $FF
+loop:
+TXA
+STA $fc
+STA $0200
+LSR
+LSR
+LSR
+LSR
+STA $fd
+STA $0202
+DEX
+jmp loop
