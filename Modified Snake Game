@@ -5,26 +5,18 @@
 
 ; Change direction: E S D F
 
-define appleL         $00 
-; screen location of apple, low byte
+define appleL         $00
+define appleH         $01
+define appleColor     $02 ; pixel value
+define snakeDirection $04 ; logic, not address
+define snakeLength    $05 ; logic, not address
 
-define appleH         $01 
-; screen location of apple, high byte
-
-define snakeHeadL     $10 
-; screen location of snake head, low byte
-
-define snakeHeadH     $11 
-; screen location of snake head, high byte
-
-define snakeBodyStart $12 
-; start of snake body byte pairs
-
-define snakeDirection $02 
-; direction (possible values are below)
-
-define snakeLength    $03 
-; snake length, in bytes
+define snakeHeadL     $10
+define snakeHeadH     $11
+define bodySegmentsL  $12
+define bodySegmentsH  $13
+; The rest of the zero page (except the sys bytes)
+;  could be filled up with body part locations.
 
 ; Directions (each using a separate bit)
 define movingUp      1
@@ -37,10 +29,19 @@ define ASCII_w      $6f ; o hw: e
 define ASCII_a      $69 ; i hw: s
 define ASCII_s      $65 ; e hw: d
 define ASCII_d      $61 ; a hw: f
+; Since terminals--and by extension this emulator,
+;  I guess--cannot directly see keypresses, we have
+;  to take values based on the virtual key input.
+; I have a weird keyboard layout (Engram 2C), so
+;  a bunch of the confusing replacement comes from
+;  that.  The rest is because I like the home row.
 
 ; System variables
 define sysRandom    $fe
 define sysLastKey   $ff
+; These are built into the emulator.  You can manually
+;  reset sysLastKey though, which I do to achieve a
+;  clean restart each time.
 
 start:
   jsr init
@@ -48,7 +49,7 @@ start:
 
 init:
   jsr initSnake
-  jsr generateApplePosition
+  jsr generateAppleData
   rts
 
 
@@ -64,32 +65,45 @@ initSnake:
   sta snakeHeadL
   
   lda #$10
-  sta snakeBodyStart
+  sta bodySegmentsL
   
   lda #$0f
-  sta $14 ; body segment 1
+  sta $14 ; body segment 2's low address byte
   
-  lda #$04
+  lda #$04 ; head and body segments' high byte
   sta snakeHeadH
-  sta $13 ; body segment 1
-  sta $15 ; body segment 2
+  sta bodySegmentsH
+  sta $15
   rts
 
 
-generateApplePosition:
-  ;load a new random byte into $00
-  lda sysRandom
+generateAppleData:
+  lda sysRandom	; low byte may span the full range
   sta appleL
-
-  ;load a new random number from 2 to 5 into $01
-  lda sysRandom
-  and #$03 ;mask out lowest 2 bits
+  lda sysRandom	; $00-FF random value
+  and #$03	; masked with 0000_0011 makes $00-03
   clc
-  adc #2
+  adc #2	; possible values now $02-05
   sta appleH
-
+  jsr getColor
+  sta appleColor
   rts
 
+getColor:
+  lda sysRandom
+  and #$0f	; mask out the high nibble
+  cmp #$00	; $00 is black
+  beq skipColor
+  cmp #$0b	; $0b is dark grey
+  beq skipColor
+skipped:	; falls to here regardless
+  rts
+
+skipColor:
+  clc
+  adc #1
+  jmp skipped
+; Could have just done rts, but don't want to muddle
 
 loop:
   jsr readKeys
@@ -99,7 +113,6 @@ loop:
   jsr drawSnake
   jsr spinWheels
   jmp loop
-
 
 readKeys:
   lda sysLastKey
@@ -112,47 +125,46 @@ readKeys:
   cmp #ASCII_a
   beq leftKey
   rts
+
 upKey:
   lda #movingDown
   bit snakeDirection
   bne illegalMove
-
   lda #movingUp
   sta snakeDirection
   rts
+
 rightKey:
   lda #movingLeft
   bit snakeDirection
   bne illegalMove
-
   lda #movingRight
   sta snakeDirection
   rts
+
 downKey:
   lda #movingUp
   bit snakeDirection
   bne illegalMove
-
   lda #movingDown
   sta snakeDirection
   rts
+
 leftKey:
   lda #movingRight
   bit snakeDirection
   bne illegalMove
-
   lda #movingLeft
   sta snakeDirection
   rts
+
 illegalMove:
   rts
-
 
 checkCollision:
   jsr checkAppleCollision
   jsr checkSnakeCollision
   rts
-
 
 checkAppleCollision:
   lda appleL
@@ -165,10 +177,9 @@ checkAppleCollision:
   ;eat apple
   inc snakeLength
   inc snakeLength ;increase length
-  jsr generateApplePosition
+  jsr generateAppleData
 doneCheckingAppleCollision:
   rts
-
 
 checkSnakeCollision:
   ldx #2 ;start with second segment
@@ -195,14 +206,13 @@ didCollide:
 didntCollide:
   rts
 
-
 updateSnake:
   ldx snakeLength
   dex
   txa
 updateloop:
   lda snakeHeadL,x
-  sta snakeBodyStart,x
+  sta bodySegmentsL,x
   dex
   bpl updateloop
 
@@ -260,16 +270,14 @@ collision:
 
 drawApple:
   ldy #0
-  lda sysRandom
+  lda appleColor
   sta (appleL),y
   rts
-
 
 drawSnake:
   ldx snakeLength
   lda #0
   sta (snakeHeadL,x) ; erase end of tail
-
   ldx #0
   lda #1
   sta (snakeHeadL,x) ; paint head
