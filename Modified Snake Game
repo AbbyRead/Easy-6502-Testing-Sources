@@ -1,3 +1,12 @@
+; To do:
+; * Snake length increasing slows down the game.
+;    - Make spinWheels amount dependent on it as a band-aid
+; * Apples can spawn on snake.  Cosmetic nuisance mostly.
+; * Apples can be white.  Probably shouldn't confuse with snake
+; * Snake length probably gets screwy at around 4 full lines
+;    - Consider defining body segments outside of zero page
+; * Write out high score length somehow on death
+
 ;  ___           _        __ ___  __ ___
 ; / __|_ _  __ _| |_____ / /| __|/  \_  )
 ; \__ \ ' \/ _` | / / -_) _ \__ \ () / /
