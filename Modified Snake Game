@@ -18,6 +18,7 @@ define appleH         $01
 define appleColor     $02 ; pixel value
 define snakeDirection $04 ; logic, not address
 define snakeLength    $05 ; logic, not address
+define spinFactor     $06
 
 define snakeHeadL     $10
 define snakeHeadH     $11
@@ -69,6 +70,9 @@ initSnake:
 
   lda #4  ;start length (2 segments)
   sta snakeLength
+
+  lda #$ff
+  sta spinFactor
   
   lda #$11
   sta snakeHeadL
@@ -180,6 +184,10 @@ checkAppleCollision:
   bne doneCheckingAppleCollision
 
   ;eat apple
+  lda spinFactor
+  beq spinFloor
+  dec spinFactor	; dec if spinFactor > 0
+spinFloor:		; to not underflow
   inc snakeLength
   inc snakeLength ;increase length
   jsr generateAppleData
@@ -289,12 +297,12 @@ drawSnake:
   rts
 
 spinWheels:
-  ldx #$40
-spinloop:
-  nop
-  nop
+  ldx spinFactor
+  bne spinLoop
+  rts
+spinLoop:
   dex
-  bne spinloop
+  bne spinLoop
   rts
 
 gameOver:
