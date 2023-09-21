@@ -99,19 +99,19 @@ generateAppleData:
   rts
 
 getColor:
-  lda sysRandom
-  and #$0f	; mask out the high nibble
-  cmp #$00	; $00 is black
-  beq skipColor
-  cmp #$0b	; $0b is dark grey
-  beq skipColor
-skipped:	; falls to here regardless
+  lda snakeLength
+  lsr
+checkColor:
+  sta $5000
+  and #7
+  cmp #$03
+  bmi skipColor
   rts
 
 skipColor:
   clc
   adc #1
-  jmp skipped
+  jmp checkColor
 ; Could have just done rts, but don't want to muddle
 
 loop:
@@ -292,7 +292,6 @@ drawSnake:
   sta (snakeHeadL,x) ; paint head
   rts
 
-
 spinWheels:
   ldx #$40
 spinloop:
@@ -301,7 +300,6 @@ spinloop:
   dex
   bne spinloop
   rts
-
 
 gameOver:
   jsr clearScreen
