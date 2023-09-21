@@ -2,7 +2,6 @@
 ; * Snake length increasing slows down the game.
 ;    - Make spinWheels amount dependent on it as a band-aid
 ; * Apples can spawn on snake.  Cosmetic nuisance mostly.
-; * Apples can be white.  Probably shouldn't confuse with snake
 ; * Snake length probably gets screwy at around 4 full lines
 ;    - Consider defining body segments outside of zero page
 ; * Write out high score length somehow on death
@@ -58,6 +57,7 @@ start:
 
 init:
   jsr initSnake
+  jsr initApple
   jsr generateAppleData
   rts
 
@@ -85,6 +85,10 @@ initSnake:
   sta $15
   rts
 
+initApple:
+  lda #1
+  sta appleColor
+  rts
 
 generateAppleData:
   lda sysRandom	; low byte may span the full range
@@ -94,25 +98,17 @@ generateAppleData:
   clc
   adc #2	; possible values now $02-05
   sta appleH
-  jsr getColor
-  sta appleColor
+  jsr updateColor
   rts
 
-getColor:
-  lda snakeLength
-  lsr
+updateColor:
+  inc appleColor
+  lda appleColor
 checkColor:
-  sta $5000
   and #7
-  cmp #$03
-  bmi skipColor
+  cmp #2
+  bmi updateColor
   rts
-
-skipColor:
-  clc
-  adc #1
-  jmp checkColor
-; Could have just done rts, but don't want to muddle
 
 loop:
   jsr readKeys
