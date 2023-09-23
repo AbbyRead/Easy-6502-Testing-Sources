@@ -1,6 +1,7 @@
 define 	placement	$00
 define 	fg 		$01
 define	bg		$02
+define	screen		$03
 
 init:
 	lda #$21
@@ -9,91 +10,61 @@ init:
 	lda #$01
 	sta fg		; foreground color
 
-	lda #$02
+	lda #$00
 	sta bg		; background color
 
+	lda #$02
+	sta screen	; screen color
+
 main:
+	jsr clear
 	jsr print
 	jmp exit
 
+clear:
+	lda #$02
+	sta $11
+	lda screen
+	ldy #$00
+	ldx #$04
+cloop:
+	sta ($10), y
+	iny
+	bne cloop
+	inc $11
+	dex
+	bne cloop
+	jsr slep
+	rts
+
+
 slep:
-	ldx #$80
+	ldx #$00
 loop:
+	nop
+	nop
 	nop
 	dex
 	bne loop
 	rts		
 
 print:
-	jsr slep
-	jsr num0
-	jsr slep
-	jsr movR
-	jsr num1
-	jsr slep
-	jsr movR
-	jsr num2
-	jsr slep
-	jsr movR
-	jsr num3
-	jsr slep
-	jsr movR
-	jsr num4
-	jsr slep
-	jsr movR
-	jsr num4
-	jsr slep
-	jsr movL
-	jsr num3
-	jsr slep
-	jsr movL
-	jsr num2
-	jsr slep
-	jsr movL
-	jsr num1
-	jsr slep
-	jsr movL
-	jsr num0	
-	jsr slep
-	jsr movL
 	jsr num_
-	jsr slep
 	jsr movR
 	jsr num_
-	jsr slep
 	jsr movR
-	jsr num0
-	jsr slep
-	jsr movR
-	jsr num1
-	jsr slep
-	jsr movR
-	jsr num2
-	jsr slep
-	jsr movR
-	jsr num3
-	jsr slep
-	jsr movR
-	jsr num4
-	jsr slep
-	jsr slep
-	jsr movR
-	jsr num4
-	jsr slep
-	jsr movL
-	jsr num3
-	jsr slep
-	jsr movL
-	jsr num2
-	jsr slep
-	jsr movL
-	jsr num1
-	jsr slep
-	jsr movL
-	jsr num0	
-	jsr slep
-	jsr movL
 	jsr num_
+	jsr movR
+	jsr num_
+	jsr movR
+	jsr num_
+	jsr movR
+	jsr num_
+	jsr movR
+	jsr num_
+	jsr movR
+	jsr num_
+	jsr movR
 	rts
 
 movL:
