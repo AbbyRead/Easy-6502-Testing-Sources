@@ -1,27 +1,43 @@
 define 	placement	$00
 define 	color 		$01
 
-	lda #1
+	lda #$09
 	sta placement 	; universal offset
+	lda #$01
 	sta color	; default color
 
 	jsr print
 	jmp exit
 
+nap:
+	ldx #$00
+loop:
+	nop
+	nop
+	dex
+	bne loop
+	rts		
+
 print:
 	jsr num0
-	jsr move
+	jsr nap
 	jsr num1
-	jsr move
-	jsr num2
-	jsr move
-	jsr num3
-	jsr move
-	jsr num4
-	
+	jsr nap
+	jsr num0
+	jsr nap
+	jsr num1
+	jsr nap
+	jsr num0	
 	rts
 
-move:
+moveL:
+	sec
+	lda placement
+	sbc #4
+	sta placement
+	rts
+
+moveR:
 	clc
 	lda #4
 	adc placement
@@ -30,6 +46,14 @@ move:
 
 num0:
 	ldx placement
+	
+	; clean area
+	lda #$00
+	sta $0221, x
+	sta $0241, x
+	sta $0261, x
+	
+	; print digit
 	lda color
 	sta $0200, x
 	sta $0201, x
@@ -47,6 +71,18 @@ num0:
 
 num1:
 	ldx placement
+	
+	; clean area
+	lda #$00
+	sta $0200, x
+	sta $0202, x
+	sta $0222, x
+	sta $0240, x
+	sta $0242, x
+	sta $0260, x
+	sta $0262, x
+
+	; print digit
 	lda color
 	sta $0201, x
 	sta $0220, x
