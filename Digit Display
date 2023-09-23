@@ -21,69 +21,22 @@ init:
 	sta screen	; screen color
 
 main:
-	jsr clear
+	jsr clearScreen
 	jsr print
 	jmp exit
 
-clear:
-	lda #$02
-	sta $11
-	lda screen
-	ldy #$00
-	ldx #$04
-cloop:
-	sta ($10), y
-	iny
-	bne cloop
-	inc $11
-	dex
-	bne cloop
-	jsr slep
-	rts
-
-
-slep:
+sleep:
 	ldx #$00
-loop:
+sloop:
 	nop
 	nop
 	dex
-	bne loop
-	rts		
+	bne sloop
+	rts	
 
 print:
-	jsr num_
-	jsr movR
-	jsr num_
-	jsr movR
-	jsr num_
-	jsr movR
-	jsr num_
-	jsr movR
-	jsr num_
-	jsr movR
-	jsr num_
-	jsr movR
-	jsr num_
-	jsr movR
-	jsr num_
-	jsr movR
-	jsr movL
-	jsr addBorder
-	jsr movL
-	jsr addBorder
-	jsr movL
-	jsr addBorder
-	jsr movL
-	jsr addBorder
-	jsr movL
-	jsr addBorder
-	jsr movL
-	jsr addBorder
-	jsr movL
-	jsr addBorder
-	jsr movL
-	jsr addBorder
+	jsr scoreboard
+	jsr return
 	jsr num0
 	jsr movR
 	jsr num1
@@ -99,14 +52,8 @@ print:
 	jsr num6
 	jsr movR
 	jsr num7
-	jsr slep
-	jsr movL
-	jsr movL
-	jsr movL
-	jsr movL
-	jsr movL
-	jsr movL
-	jsr movL
+	jsr sleep
+	jsr return
 	jsr num8
 	jsr movR
 	jsr num9
@@ -123,6 +70,11 @@ movR:
 	clc
 	lda #4
 	adc placement
+	sta placement
+	rts
+
+return:
+	lda #$21
 	sta placement
 	rts
 
@@ -419,5 +371,59 @@ num9:
 	sta $0280, x
 	sta $0281, x
 	rts
+
+scoreboard:
+	jsr return
+	jsr addBorder
+	jsr movR
+	jsr addBorder
+	jsr movR
+	jsr addBorder
+	jsr movR
+	jsr addBorder
+	jsr movR
+	jsr addBorder
+	jsr movR
+	jsr addBorder
+	jsr movR
+	jsr addBorder
+	jsr movR
+	jsr addBorder
+	rts
+
+clearDigits:
+	jsr return
+	jsr num_
+	jsr movR
+	jsr num_
+	jsr movR
+	jsr num_
+	jsr movR
+	jsr num_
+	jsr movR
+	jsr num_
+	jsr movR
+	jsr num_
+	jsr movR
+	jsr num_
+	jsr movR
+	jsr num_
+	jsr movR
+	rts
+
+clearScreen:
+	lda #$02
+	sta $11
+	lda screen
+	ldy #$00
+	ldx #$04
+cloop:
+	sta ($10), y
+	iny
+	bne cloop
+	inc $11
+	dex
+	bne cloop
+	rts	
 
 exit:
