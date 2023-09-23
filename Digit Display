@@ -1,60 +1,148 @@
 define 	placement	$00
-define 	color 		$01
+define 	fg 		$01
+define	bg		$02
 
-	lda #$09
+init:
+	lda #$21
 	sta placement 	; universal offset
-	lda #$01
-	sta color	; default color
 
+	lda #$01
+	sta fg		; foreground color
+
+	lda #$02
+	sta bg		; background color
+
+main:
 	jsr print
 	jmp exit
 
-nap:
-	ldx #$00
+slep:
+	ldx #$80
 loop:
-	nop
 	nop
 	dex
 	bne loop
 	rts		
 
 print:
+	jsr slep
 	jsr num0
-	jsr nap
+	jsr slep
+	jsr movR
 	jsr num1
-	jsr nap
-	jsr num0
-	jsr nap
+	jsr slep
+	jsr movR
+	jsr num2
+	jsr slep
+	jsr movR
+	jsr num3
+	jsr slep
+	jsr movR
+	jsr num4
+	jsr slep
+	jsr movR
+	jsr num4
+	jsr slep
+	jsr movL
+	jsr num3
+	jsr slep
+	jsr movL
+	jsr num2
+	jsr slep
+	jsr movL
 	jsr num1
-	jsr nap
+	jsr slep
+	jsr movL
 	jsr num0	
+	jsr slep
+	jsr movL
+	jsr num_
+	jsr slep
+	jsr movR
+	jsr num_
+	jsr slep
+	jsr movR
+	jsr num0
+	jsr slep
+	jsr movR
+	jsr num1
+	jsr slep
+	jsr movR
+	jsr num2
+	jsr slep
+	jsr movR
+	jsr num3
+	jsr slep
+	jsr movR
+	jsr num4
+	jsr slep
+	jsr slep
+	jsr movR
+	jsr num4
+	jsr slep
+	jsr movL
+	jsr num3
+	jsr slep
+	jsr movL
+	jsr num2
+	jsr slep
+	jsr movL
+	jsr num1
+	jsr slep
+	jsr movL
+	jsr num0	
+	jsr slep
+	jsr movL
+	jsr num_
 	rts
 
-moveL:
+movL:
 	sec
 	lda placement
 	sbc #4
 	sta placement
 	rts
 
-moveR:
+movR:
 	clc
 	lda #4
 	adc placement
 	sta placement
 	rts
 
+num_:
+	ldx placement
+	
+	; for manual bg blanking
+	lda bg
+	sta $0200, x
+	sta $0201, x
+	sta $0202, x
+	sta $0220, x
+	sta $0221, x
+	sta $0222, x
+	sta $0240, x
+	sta $0241, x
+	sta $0242, x
+	sta $0260, x
+	sta $0261, x
+	sta $0262, x
+	sta $0280, x
+	sta $0281, x
+	sta $0282, x
+	rts
+
 num0:
 	ldx placement
 	
 	; clean area
-	lda #$00
+	lda bg
 	sta $0221, x
 	sta $0241, x
 	sta $0261, x
 	
 	; print digit
-	lda color
+	lda fg
 	sta $0200, x
 	sta $0201, x
 	sta $0202, x
@@ -73,7 +161,7 @@ num1:
 	ldx placement
 	
 	; clean area
-	lda #$00
+	lda bg
 	sta $0200, x
 	sta $0202, x
 	sta $0222, x
@@ -83,7 +171,7 @@ num1:
 	sta $0262, x
 
 	; print digit
-	lda color
+	lda fg
 	sta $0201, x
 	sta $0220, x
 	sta $0221, x
@@ -96,7 +184,18 @@ num1:
 
 num2:
 	ldx placement
-	lda color
+	
+	; clean area
+	lda bg
+	sta $0202, x
+	sta $0220, x
+	sta $0221, x
+	sta $0240, x
+	sta $0241, x
+	sta $0262, x
+	
+	; print digit
+	lda fg
 	sta $0200, x
 	sta $0201, x
 	sta $0201, x
@@ -111,7 +210,19 @@ num2:
 	
 num3:
 	ldx placement
-	lda color
+	
+	; clean area
+	lda bg
+	sta $0220, x
+	sta $0221, x
+	sta $0240, x
+	sta $0242, x
+	sta $0260, x
+	sta $0261, x
+	sta $0282, x
+	
+	; print digit
+	lda fg
 	sta $0200, x
 	sta $0201, x
 	sta $0202, x
@@ -124,7 +235,19 @@ num3:
 	
 num4:
 	ldx placement
-	lda color
+	
+	; clean area
+	lda bg
+	sta $0201, x
+	sta $0202, x
+	sta $0221, x
+	sta $0260, x
+	sta $0261, x
+	sta $0280, x
+	sta $0281, x
+	
+	; print digit
+	lda fg
 	sta $0200, x
 	sta $0200, x
 	sta $0220, x
