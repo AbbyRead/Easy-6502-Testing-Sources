@@ -3,6 +3,7 @@ define 	fg 		$01
 define	bg		$02
 define  border		$03
 define	screen		$04
+define	score		$05
 
 init:
 	lda #$21
@@ -20,6 +21,9 @@ init:
 	lda #$02
 	sta screen	; screen color
 
+	lda #$00
+	sta score	; default score
+
 main:
 	jsr clearScreen
 	jsr print
@@ -35,7 +39,69 @@ sloop:
 	rts	
 
 print:
+	; the display holds 8 spaces
 	jsr scoreboard
+	jsr clearDigits	; right-ending
+	jsr printScore
+	rts
+
+printScore:
+	ldx score
+	beq prnt0
+	dex
+	beq prnt1
+	dex
+	beq prnt2
+	dex
+	beq prnt3
+	dex
+	beq prnt4
+	dex
+	beq prnt5
+	dex
+	beq prnt6
+	dex
+	beq prnt7
+	dex
+	beq prnt8
+	dex
+	beq prnt9
+scorePrinted:
+	rts
+
+prnt0:
+	jsr num0
+	jmp scorePrinted
+prnt1:
+	jsr num1
+	jmp scorePrinted
+prnt2:
+	jsr num2
+	jmp scorePrinted
+prnt3:
+	jsr num3
+	jmp scorePrinted
+prnt4:
+	jsr num4
+	jmp scorePrinted
+prnt5:
+	jsr num5
+	jmp scorePrinted
+prnt6:
+	jsr num6
+	jmp scorePrinted
+prnt7:
+	jsr num7
+	jmp scorePrinted
+prnt8:
+	jsr num8
+	jmp scorePrinted
+prnt9:
+	jsr num9
+	jmp scorePrinted
+
+
+demo:
 	jsr return
 	jsr num0
 	jsr movR
@@ -389,6 +455,7 @@ scoreboard:
 	jsr addBorder
 	jsr movR
 	jsr addBorder
+	jsr return
 	rts
 
 clearDigits:
@@ -408,7 +475,6 @@ clearDigits:
 	jsr num_
 	jsr movR
 	jsr num_
-	jsr movR
 	rts
 
 clearScreen:
@@ -424,6 +490,7 @@ cloop:
 	inc $11
 	dex
 	bne cloop
+	stx $11
 	rts	
 
 exit:
