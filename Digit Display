@@ -1,0 +1,103 @@
+define 	placement	$00
+define 	color 		$01
+
+	lda #1
+	sta placement 	; universal offset
+	sta color	; default color
+
+	jsr print
+	jmp exit
+
+print:
+	jsr num0
+	jsr move
+	jsr num1
+	jsr move
+	jsr num2
+	jsr move
+	jsr num3
+	jsr move
+	jsr num4
+	
+	rts
+
+move:
+	clc
+	lda #4
+	adc placement
+	sta placement
+	rts
+
+num0:
+	ldx placement
+	lda color
+	sta $0200, x
+	sta $0201, x
+	sta $0202, x
+	sta $0220, x
+	sta $0222, x
+	sta $0240, x
+	sta $0242, x
+	sta $0260, x
+	sta $0262, x
+	sta $0280, x
+	sta $0281, x
+	sta $0282, x
+	rts
+
+num1:
+	ldx placement
+	lda color
+	sta $0201, x
+	sta $0220, x
+	sta $0221, x
+	sta $0241, x
+	sta $0261, x
+	sta $0280, x
+	sta $0281, x
+	sta $0282, x
+	rts
+
+num2:
+	ldx placement
+	lda color
+	sta $0200, x
+	sta $0201, x
+	sta $0201, x
+	sta $0222, x
+	sta $0242, x
+	sta $0260, x
+	sta $0261, x
+	sta $0280, x
+	sta $0281, x
+	sta $0282, x
+	rts
+	
+num3:
+	ldx placement
+	lda color
+	sta $0200, x
+	sta $0201, x
+	sta $0202, x
+	sta $0222, x
+	sta $0241, x
+	sta $0262, x
+	sta $0280, x
+	sta $0281, x
+	rts
+	
+num4:
+	ldx placement
+	lda color
+	sta $0200, x
+	sta $0200, x
+	sta $0220, x
+	sta $0222, x
+	sta $0240, x
+	sta $0241, x
+	sta $0242, x
+	sta $0262, x
+	sta $0282, x
+	rts	
+ 
+exit:
