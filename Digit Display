@@ -69,23 +69,47 @@ print:
 	jsr num_
 	jsr movR
 	jsr movL
+	jsr addBorder
+	jsr movL
+	jsr addBorder
+	jsr movL
+	jsr addBorder
+	jsr movL
+	jsr addBorder
+	jsr movL
+	jsr addBorder
+	jsr movL
+	jsr addBorder
+	jsr movL
+	jsr addBorder
+	jsr movL
+	jsr addBorder
+	jsr num0
+	jsr movR
+	jsr num1
+	jsr movR
+	jsr num2
+	jsr movR
+	jsr num3
+	jsr movR
+	jsr num4
+	jsr movR
+	jsr num5
+	jsr movR
+	jsr num6
+	jsr movR
+	jsr num7
 	jsr slep
-	jsr addBorder
 	jsr movL
-	jsr addBorder
 	jsr movL
-	jsr addBorder
 	jsr movL
-	jsr addBorder
 	jsr movL
-	jsr addBorder
 	jsr movL
-	jsr addBorder
 	jsr movL
-	jsr addBorder
 	jsr movL
-	jsr addBorder
-	jsr slep
+	jsr num8
+	jsr movR
+	jsr num9
 	rts
 
 movL:
@@ -262,7 +286,6 @@ num4:
 	; print digit
 	lda fg
 	sta $0200, x
-	sta $0200, x
 	sta $0220, x
 	sta $0222, x
 	sta $0240, x
@@ -270,6 +293,131 @@ num4:
 	sta $0242, x
 	sta $0262, x
 	sta $0282, x
+	rts
+
+num5:
+	ldx placement
+	
+	; clean area
+	lda bg
+	sta $0221, x
+	sta $0222, x
+	sta $0260, x
+	sta $0261, x
+	sta $0282, x
+	
+	; print digit
+	lda fg
+	sta $0200, x
+	sta $0201, x
+	sta $0202, x
+	sta $0220, x
+	sta $0240, x
+	sta $0241, x
+	sta $0242, x
+	sta $0262, x
+	sta $0280, x
+	sta $0281, x
 	rts	
- 
+
+num6:
+	ldx placement
+	
+	; clean area
+	lda bg
+	sta $0200, x
+	sta $0221, x
+	sta $0222, x
+	sta $0261, x
+	
+	; print digit
+	lda fg
+	sta $0201, x
+	sta $0202, x
+	sta $0220, x
+	sta $0240, x
+	sta $0241, x
+	sta $0242, x
+	sta $0260, x
+	sta $0262, x
+	sta $0280, x
+	sta $0281, x
+	sta $0282, x
+	rts	
+
+num7:
+	ldx placement
+	
+	; clean area
+	lda bg
+	sta $0220, x
+	sta $0221, x
+	sta $0240, x
+	sta $0242, x
+	sta $0260, x
+	sta $0262, x
+	sta $0280, x
+	sta $0282, x
+	
+	; print digit
+	lda fg
+	sta $0200, x
+	sta $0201, x
+	sta $0202, x
+	sta $0222, x
+	sta $0241, x
+	sta $0261, x
+	sta $0281, x
+	rts	
+
+num8:
+	ldx placement
+	
+	; clean area
+	lda bg
+	sta $0202, x
+	sta $0221, x
+	sta $0261, x
+	
+	; print digit
+	lda fg
+	sta $0200, x
+	sta $0201, x
+	sta $0220, x
+	sta $0222, x
+	sta $0240, x
+	sta $0241, x
+	sta $0242, x
+	sta $0260, x
+	sta $0262, x
+	sta $0280, x
+	sta $0281, x
+	sta $0282, x
+	rts	
+
+num9:
+	ldx placement
+	
+	; clean area
+	lda bg
+	sta $0221, x
+	sta $0260, x
+	sta $0261, x
+	sta $0282, x
+	
+	; print digit
+	lda fg
+	sta $0200, x
+	sta $0201, x
+	sta $0202, x
+	sta $0220, x
+	sta $0222, x
+	sta $0240, x
+	sta $0241, x
+	sta $0242, x
+	sta $0262, x
+	sta $0280, x
+	sta $0281, x
+	rts
+
 exit:
