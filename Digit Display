@@ -1,7 +1,8 @@
 define 	placement	$00
 define 	fg 		$01
 define	bg		$02
-define	screen		$03
+define  border		$03
+define	screen		$04
 
 init:
 	lda #$21
@@ -12,6 +13,9 @@ init:
 
 	lda #$00
 	sta bg		; background color
+
+	lda #$09
+	sta border	; text border color
 
 	lda #$02
 	sta screen	; screen color
@@ -43,7 +47,6 @@ slep:
 loop:
 	nop
 	nop
-	nop
 	dex
 	bne loop
 	rts		
@@ -65,6 +68,24 @@ print:
 	jsr movR
 	jsr num_
 	jsr movR
+	jsr movL
+	jsr slep
+	jsr addBorder
+	jsr movL
+	jsr addBorder
+	jsr movL
+	jsr addBorder
+	jsr movL
+	jsr addBorder
+	jsr movL
+	jsr addBorder
+	jsr movL
+	jsr addBorder
+	jsr movL
+	jsr addBorder
+	jsr movL
+	jsr addBorder
+	jsr slep
 	rts
 
 movL:
@@ -79,6 +100,27 @@ movR:
 	lda #4
 	adc placement
 	sta placement
+	rts
+
+addBorder:
+	lda placement
+	sec
+	sbc #$21	; move up-left one pixel
+	tax
+	lda border
+	sta $0200, x	; top
+	sta $0201, x
+	sta $0202, x
+	sta $0203, x
+	sta $0220, x	; left side
+	sta $0240, x
+	sta $0260, x
+	sta $0280, x
+	sta $02a0, x
+	sta $02c0, x	; bottom
+	sta $02c1, x
+	sta $02c2, x
+	sta $02c3, x
 	rts
 
 num_:
